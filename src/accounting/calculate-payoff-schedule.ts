@@ -72,7 +72,7 @@ export const calculatePayoffSchedule = (
         return {
           date: now.plus({ month: paymentNumber }).toJSDate(),
           loanId: loans.originalLoan.id,
-          payment,
+          amount: payment,
           principlePaid,
           interestPaid,
           principleRemaining: loans.paidDownLoan.balance,

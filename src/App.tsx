@@ -11,6 +11,7 @@ import {
 } from "./accounting/calculate-payoff-schedule";
 import { LoanResultSummary } from "./LoanResultSummary";
 import { calculateTotalInterest } from "./accounting/calculate-total-interest";
+import { LoanResult } from "./LoanResult";
 
 const App: React.FC = () => {
   const [loans, setLoans] = React.useState<FormLoan[]>([]);
@@ -184,11 +185,14 @@ const App: React.FC = () => {
         </div>
 
         {loanPayoffs.map((l) => (
-          <LoanResultSummary
-            loanName={l.loanName}
-            payOffDate={l.payments[l.payments.length - 1].date}
-            totalInterestPaid={calculateTotalInterest(l.payments)}
-          />
+          <>
+            <LoanResultSummary
+              loanName={l.loanName}
+              payOffDate={l.payments[l.payments.length - 1].date}
+              totalInterestPaid={calculateTotalInterest(l.payments)}
+            />
+            <LoanResult payments={l.payments} />
+          </>
         ))}
 
         <div className="row">

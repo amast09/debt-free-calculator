@@ -1,12 +1,5 @@
 import React from "react";
-
-interface Payment {
-  readonly date: Date;
-  readonly amount: number;
-  readonly principalPaid: number;
-  readonly interestPaid: number;
-  readonly principleRemaining: number;
-}
+import { Payment } from "./types/Payment";
 
 interface LoanResultProps {
   readonly payments: Payment[];
@@ -29,9 +22,9 @@ export const LoanResult: React.FC<LoanResultProps> = (
             </tr>
             {props.payments.map((payment) => (
               <tr>
-                <td>{payment.date}</td>
+                <td>{payment.date.toDateString()}</td>
                 <td>${payment.amount}</td>
-                <td>${payment.principalPaid}</td>
+                <td>${payment.principlePaid}</td>
                 <td>${payment.interestPaid}</td>
                 <td>${payment.principleRemaining}</td>
               </tr>
