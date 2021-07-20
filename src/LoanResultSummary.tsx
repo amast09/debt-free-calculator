@@ -22,7 +22,7 @@ export const LoanResultSummary: React.FC<LoanResultSummaryProps> = (
       <h4>{props.loanName}</h4>
     </div>
     <div className="col-sm-4">
-      <h4>paid off by {props.payOffDate}</h4>
+      <h4>paid off by {props.payOffDate.toDateString()}</h4>
     </div>
     <div className="col-sm-3">
       <h4>interest paid: ${props.totalInterestPaid}</h4>

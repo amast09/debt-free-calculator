@@ -19,13 +19,16 @@ export const LoanForm: React.FC<LoanFormProps> = ({
   const [minimumPayment, setMinimumPayment] = React.useState<string>("");
   const [interestRate, setInterestRate] = React.useState<string>("");
 
+  React.useEffect(() => {
+    if (isFormValid()) {
+      onChange({ id, name, balance, interestRate, minimumPayment });
+    }
+  }, [name, balance, minimumPayment, interestRate]);
+
   const onChangeHandler =
     (handler: (value: string) => void) =>
     (e: ChangeEvent<HTMLInputElement>): void => {
       handler(e.target.value);
-      if (isFormValid()) {
-        onChange({ id, name, balance, interestRate, minimumPayment });
-      }
     };
 
   const isFormValid = (): boolean =>

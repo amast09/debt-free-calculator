@@ -5,10 +5,17 @@ import "./App.css";
 import { LoanForm } from "./LoanForm";
 import { PayoffStrategy } from "./types/PayoffStrategy";
 import { FormLoan } from "./types/Loan";
+import {
+  calculatePayoffSchedule,
+  LoanPayoff,
+} from "./accounting/calculate-payoff-schedule";
+import { LoanResultSummary } from "./LoanResultSummary";
+import { calculateTotalInterest } from "./accounting/calculate-total-interest";
 
 const App: React.FC = () => {
   const [loans, setLoans] = React.useState<FormLoan[]>([]);
-  const [payoffType, setPayoffType] = React.useState<PayoffStrategy>(
+  const [loanPayoffs, setLoanPayoffs] = React.useState<LoanPayoff[]>([]);
+  const [payoffStrategy, setPayoffStrategy] = React.useState<PayoffStrategy>(
     PayoffStrategy.Avalanche
   );
   const [monthlyPayment, setMonthlyPayment] = React.useState<string>("");
@@ -25,6 +32,7 @@ const App: React.FC = () => {
   };
   const onLoanChange = (loan: FormLoan): void => {
     const newLoans: FormLoan[] = [];
+    console.log(loan);
     setLoans(
       loans.reduce((acc, l) => {
         if (l.id === loan.id) {
@@ -40,7 +48,22 @@ const App: React.FC = () => {
   const onMonthlyPaymentChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setMonthlyPayment(e.target.value);
   };
-  const onCalculateClickHandler = (): void => {};
+  const onCalculateClickHandler = (): void => {
+    const x = calculatePayoffSchedule({
+      loans: loans.map((l) => ({
+        id: l.id,
+        name: l.name,
+        balance: Number(l.balance),
+        interestRate: Number(l.interestRate),
+        minimumPayment: Number(l.minimumPayment),
+      })),
+      payoffStrategy,
+      monthlyPayment: Number(monthlyPayment),
+    });
+    console.log(loans);
+    console.log(x);
+    setLoanPayoffs(x);
+  };
 
   return (
     <>
@@ -124,9 +147,9 @@ const App: React.FC = () => {
             <div className="row">
               <div className="col-sm-6">
                 <Button
-                  onClick={() => setPayoffType(PayoffStrategy.Avalanche)}
+                  onClick={() => setPayoffStrategy(PayoffStrategy.Avalanche)}
                   variant={
-                    payoffType === PayoffStrategy.Avalanche
+                    payoffStrategy === PayoffStrategy.Avalanche
                       ? "primary"
                       : "outline-primary"
                   }
@@ -136,9 +159,9 @@ const App: React.FC = () => {
               </div>
               <div className="col-sm-6">
                 <Button
-                  onClick={() => setPayoffType(PayoffStrategy.Snowball)}
+                  onClick={() => setPayoffStrategy(PayoffStrategy.Snowball)}
                   variant={
-                    payoffType === PayoffStrategy.Snowball
+                    payoffStrategy === PayoffStrategy.Snowball
                       ? "primary"
                       : "outline-primary"
                   }
@@ -159,6 +182,14 @@ const App: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        {loanPayoffs.map((l) => (
+          <LoanResultSummary
+            loanName={l.loanName}
+            payOffDate={l.payments[l.payments.length - 1].date}
+            totalInterestPaid={calculateTotalInterest(l.payments)}
+          />
+        ))}
 
         <div className="row">
           <div className="col-sm-3">
@@ -243,8 +274,8 @@ const App: React.FC = () => {
             </div>
             <div className="modal-body">
               <p>
-                Debt Free Calculator is a loan calculator designed to help you get
-                debt-free as fast as possible. Once your loan information is
+                Debt Free Calculator is a loan calculator designed to help you
+                get debt-free as fast as possible. Once your loan information is
                 entered, you may set the total amount you're able to put towards
                 loans in a month. If this amount is greater than the minimum
                 you're able to pay on loans, the extra money is put towards one
@@ -285,7 +316,8 @@ const App: React.FC = () => {
             </div>
             <div className="modal-body">
               <p>
-                <strong>Debt Free Calculator</strong> is a loan calculator created by
+                <strong>Debt Free Calculator</strong> is a loan calculator
+                created by
                 <a
                   href="https://aaronmast.dev/"
                   target="_new"
@@ -298,8 +330,10 @@ const App: React.FC = () => {
 
               <p>
                 Source code for the project may be obtained at
-                <a href="https://github.com/amast/debt-free-calculator">github</a> and is
-                licensed under the
+                <a href="https://github.com/amast/debt-free-calculator">
+                  github
+                </a>{" "}
+                and is licensed under the
                 <a href="https://www.opensource.org/licenses/mit-license.php">
                   MIT License
                 </a>
