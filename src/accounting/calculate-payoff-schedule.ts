@@ -7,14 +7,7 @@ import { applyPayment } from "./apply-payment";
 import groupBy from "lodash/groupBy";
 import omit from "lodash/omit";
 import currency from "currency.js";
-
-interface Payment {
-  readonly date: Date;
-  readonly payment: number;
-  readonly principlePaid: number;
-  readonly interestPaid: number;
-  readonly principleRemaining: number;
-}
+import { Payment } from "../types/Payment";
 
 interface PaymentWithId extends Payment {
   readonly loanId: number;
