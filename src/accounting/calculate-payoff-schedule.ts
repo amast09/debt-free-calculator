@@ -8,14 +8,10 @@ import groupBy from "lodash/groupBy";
 import omit from "lodash/omit";
 import currency from "currency.js";
 import { Payment } from "../types/Payment";
+import { LoanPayoff } from "../types/LoanPayoff";
 
 interface PaymentWithId extends Payment {
   readonly loanId: number;
-}
-
-export interface LoanPayoff {
-  readonly loanName: string;
-  readonly payments: Payment[];
 }
 
 interface CalculatePayoffScheduleParams {
@@ -23,6 +19,24 @@ interface CalculatePayoffScheduleParams {
   readonly payoffStrategy: PayoffStrategy;
   readonly monthlyPayment: number;
 }
+
+const foobar = (paymentNumber: number, now: DateTime) => (loans: any) => {
+  const payment = currency(loans.loanWithInterest.balance).subtract(
+    currency(loans.paidDownLoan.balance)
+  ).value;
+  const interestPaid = currency(loans.loanWithInterest.balance).subtract(
+    currency(loans.originalLoan.balance)
+  ).value;
+  const principlePaid = currency(payment).subtract(interestPaid).value;
+  return {
+    date: now.plus({ month: paymentNumber }).toJSDate(),
+    loanId: loans.originalLoan.id,
+    amount: payment,
+    principlePaid,
+    interestPaid,
+    principleRemaining: loans.paidDownLoan.balance,
+  };
+};
 
 export const calculatePayoffSchedule = (
   params: CalculatePayoffScheduleParams
@@ -61,23 +75,7 @@ export const calculatePayoffSchedule = (
       }
     });
     payments = payments.concat(
-      loansAfterExtraPayments.map((loans) => {
-        const payment = currency(loans.loanWithInterest.balance).subtract(
-          currency(loans.paidDownLoan.balance)
-        ).value;
-        const interestPaid = currency(loans.loanWithInterest.balance).subtract(
-          currency(loans.originalLoan.balance)
-        ).value;
-        const principlePaid = currency(payment).subtract(interestPaid).value;
-        return {
-          date: now.plus({ month: paymentNumber }).toJSDate(),
-          loanId: loans.originalLoan.id,
-          amount: payment,
-          principlePaid,
-          interestPaid,
-          principleRemaining: loans.paidDownLoan.balance,
-        };
-      })
+      loansAfterExtraPayments.map(foobar(paymentNumber, now))
     );
     currentLoans = loansAfterExtraPayments
       .map((l) => l.paidDownLoan)

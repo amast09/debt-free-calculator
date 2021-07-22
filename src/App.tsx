@@ -5,17 +5,14 @@ import "./App.css";
 import { LoanForm } from "./LoanForm";
 import { PayoffStrategy } from "./types/PayoffStrategy";
 import { FormLoan } from "./types/Loan";
-import {
-  calculatePayoffSchedule,
-  LoanPayoff,
-} from "./accounting/calculate-payoff-schedule";
-import { LoanResultSummary } from "./LoanResultSummary";
-import { calculateTotalInterest } from "./accounting/calculate-total-interest";
-import { LoanResult } from "./LoanResult";
+import { calculatePayoffSchedule } from "./accounting/calculate-payoff-schedule";
+import { LoanPayoff } from "./LoanPayoff";
+import { LoanPayoff as LoanPayoffType } from "./types/LoanPayoff";
+import isEqual from "lodash/isEqual";
 
 const App: React.FC = () => {
   const [loans, setLoans] = React.useState<FormLoan[]>([]);
-  const [loanPayoffs, setLoanPayoffs] = React.useState<LoanPayoff[]>([]);
+  const [loanPayoffs, setLoanPayoffs] = React.useState<LoanPayoffType[]>([]);
   const [payoffStrategy, setPayoffStrategy] = React.useState<PayoffStrategy>(
     PayoffStrategy.Avalanche
   );
@@ -31,39 +28,48 @@ const App: React.FC = () => {
       })
     );
   };
-  const onLoanChange = (loan: FormLoan): void => {
-    const newLoans: FormLoan[] = [];
-    console.log(loan);
-    setLoans(
-      loans.reduce((acc, l) => {
-        if (l.id === loan.id) {
-          return acc.concat(loan);
-        }
-        return acc.concat(l);
-      }, newLoans)
-    );
-  };
-  const onLoanRemove = (loanId: number): void => {
-    setLoans(loans.filter((l) => l.id !== loanId));
-  };
+  const onLoanChange = React.useCallback(
+    (loan: FormLoan): void => {
+      const loanExists = loans.some((l) => isEqual(l, loan));
+
+      if (!loanExists) {
+        const newLoans: FormLoan[] = [];
+        setLoans(
+          loans.reduce((acc, l) => {
+            if (l.id === loan.id) {
+              return acc.concat(loan);
+            }
+            return acc.concat(l);
+          }, newLoans)
+        );
+      }
+    },
+    [loans, setLoans]
+  );
+  const onLoanRemove = React.useCallback(
+    (loanId: number): void => {
+      setLoans(loans.filter((l) => l.id !== loanId));
+    },
+    [loans, setLoans]
+  );
   const onMonthlyPaymentChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setMonthlyPayment(e.target.value);
   };
   const onCalculateClickHandler = (): void => {
-    const x = calculatePayoffSchedule({
-      loans: loans.map((l) => ({
-        id: l.id,
-        name: l.name,
-        balance: Number(l.balance),
-        interestRate: Number(l.interestRate),
-        minimumPayment: Number(l.minimumPayment),
-      })),
-      payoffStrategy,
-      monthlyPayment: Number(monthlyPayment),
-    });
-    console.log(loans);
-    console.log(x);
-    setLoanPayoffs(x);
+    const ls = loans.map((l) => ({
+      id: l.id,
+      name: l.name,
+      balance: Number(l.balance),
+      interestRate: Number(l.interestRate),
+      minimumPayment: Number(l.minimumPayment),
+    }));
+    setLoanPayoffs(
+      calculatePayoffSchedule({
+        loans: ls,
+        payoffStrategy,
+        monthlyPayment: Number(monthlyPayment),
+      })
+    );
   };
 
   return (
@@ -81,13 +87,7 @@ const App: React.FC = () => {
             <h3>get unburied from debt</h3>
           </div>
           <div className="col-sm-2">
-            <a data-toggle="modal" data-target="#helpModal" href="#">
-              help
-            </a>{" "}
-            \
-            <a data-toggle="modal" data-target="#aboutModal" href="#">
-              about
-            </a>
+            <a href="/">help</a> \ <a href="/">about</a>
           </div>
         </div>
 
@@ -103,6 +103,7 @@ const App: React.FC = () => {
         <div id="loan-inputs">
           {loans.map((l) => (
             <LoanForm
+              key={l.id}
               id={l.id}
               onChange={onLoanChange}
               onRemove={onLoanRemove}
@@ -136,13 +137,7 @@ const App: React.FC = () => {
           <div className="col-sm-4 col-sm-offset-1">
             <h4>
               payment type
-              <a
-                data-toggle="modal"
-                data-target="#paymentTypeHelpModal"
-                href="#"
-              >
-                <span className="question">?</span>
-              </a>
+              <a href="/">?</a>
             </h4>
 
             <div className="row">
@@ -185,14 +180,7 @@ const App: React.FC = () => {
         </div>
 
         {loanPayoffs.map((l) => (
-          <>
-            <LoanResultSummary
-              loanName={l.loanName}
-              payOffDate={l.payments[l.payments.length - 1].date}
-              totalInterestPaid={calculateTotalInterest(l.payments)}
-            />
-            <LoanResult payments={l.payments} />
-          </>
+          <LoanPayoff key={l.loanName} loanPayoff={l} />
         ))}
 
         <div className="row">
