@@ -3,10 +3,13 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { appStateFromQueryString } from "./app-state-from-query-string";
+
+const initialState = appStateFromQueryString(window.location.search);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App initialState={initialState} />
   </React.StrictMode>,
   document.getElementById("root")
 );

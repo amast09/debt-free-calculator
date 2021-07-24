@@ -5,6 +5,7 @@ interface LoanFormProps {
   readonly id: number;
   readonly onChange: (loan: FormLoan) => void;
   readonly onRemove: (loanId: number) => void;
+  readonly initialLoanState?: FormLoan;
 }
 
 const isNumeric = (str: string): boolean => !isNaN(parseFloat(str));
@@ -13,11 +14,18 @@ export const LoanForm: React.FC<LoanFormProps> = ({
   onChange,
   id,
   onRemove,
+  initialLoanState,
 }) => {
-  const [name, setName] = React.useState<string>("");
-  const [balance, setBalance] = React.useState<string>("");
-  const [minimumPayment, setMinimumPayment] = React.useState<string>("");
-  const [interestRate, setInterestRate] = React.useState<string>("");
+  const [name, setName] = React.useState<string>(initialLoanState?.name || "");
+  const [balance, setBalance] = React.useState<string>(
+    initialLoanState?.balance || ""
+  );
+  const [minimumPayment, setMinimumPayment] = React.useState<string>(
+    initialLoanState?.minimumPayment || ""
+  );
+  const [interestRate, setInterestRate] = React.useState<string>(
+    initialLoanState?.interestRate || ""
+  );
 
   const onChangeHandler =
     (handler: (value: string) => void) =>

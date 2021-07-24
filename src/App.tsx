@@ -9,14 +9,39 @@ import { calculatePayoffSchedule } from "./accounting/calculate-payoff-schedule"
 import { LoanPayoff } from "./LoanPayoff";
 import { LoanPayoff as LoanPayoffType } from "./types/LoanPayoff";
 import isEqual from "lodash/isEqual";
+import { PayoffGraph } from "./PayoffGraph";
+import { appStateToQueryString } from "./app-state-to-query-string";
+import { InitialAppState } from "./types/InitialAppState";
 
-const App: React.FC = () => {
-  const [loans, setLoans] = React.useState<FormLoan[]>([]);
-  const [loanPayoffs, setLoanPayoffs] = React.useState<LoanPayoffType[]>([]);
-  const [payoffStrategy, setPayoffStrategy] = React.useState<PayoffStrategy>(
-    PayoffStrategy.Avalanche
+interface AppProps {
+  readonly initialState?: InitialAppState;
+}
+
+const App: React.FC<AppProps> = ({ initialState }) => {
+  const [loans, setLoans] = React.useState<FormLoan[]>(
+    initialState?.loans || []
   );
-  const [monthlyPayment, setMonthlyPayment] = React.useState<string>("");
+  const [loanPayoffs, setLoanPayoffs] = React.useState<LoanPayoffType[]>(
+    initialState
+      ? calculatePayoffSchedule({
+          loans: initialState.loans.map((l) => ({
+            id: l.id,
+            name: l.name,
+            balance: Number(l.balance),
+            interestRate: Number(l.interestRate),
+            minimumPayment: Number(l.minimumPayment),
+          })),
+          payoffStrategy: initialState.payoffStrategy,
+          monthlyPayment: Number(initialState.monthlyPayment),
+        })
+      : []
+  );
+  const [payoffStrategy, setPayoffStrategy] = React.useState<PayoffStrategy>(
+    initialState?.payoffStrategy || PayoffStrategy.Avalanche
+  );
+  const [monthlyPayment, setMonthlyPayment] = React.useState<string>(
+    initialState?.monthlyPayment || ""
+  );
   const onLoanAddButtonClick = (): void => {
     setLoans(
       loans.concat({
@@ -70,6 +95,15 @@ const App: React.FC = () => {
         monthlyPayment: Number(monthlyPayment),
       })
     );
+    window.history.pushState(
+      {},
+      "",
+      window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname +
+        appStateToQueryString({ monthlyPayment, loans, payoffStrategy })
+    );
   };
 
   return (
@@ -107,6 +141,7 @@ const App: React.FC = () => {
               id={l.id}
               onChange={onLoanChange}
               onRemove={onLoanRemove}
+              initialLoanState={l}
             />
           ))}
         </div>
@@ -178,6 +213,8 @@ const App: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        {loanPayoffs.length > 0 && <PayoffGraph loanPayoffs={loanPayoffs} />}
 
         {loanPayoffs.map((l) => (
           <LoanPayoff key={l.loanName} loanPayoff={l} />
