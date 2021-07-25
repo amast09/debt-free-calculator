@@ -2,10 +2,8 @@ import { PayoffStrategy } from "../types/PayoffStrategy";
 import { Loan } from "../types/Loan";
 import shuffle from "lodash/shuffle";
 import { DateTime } from "luxon";
-import {
-  calculatePayoffSchedule,
-  LoanPayoff,
-} from "./calculate-payoff-schedule";
+import { calculatePayoffSchedule } from "./calculate-payoff-schedule";
+import { LoanPayoff } from "../types/LoanPayoff";
 
 const loan1: Loan = {
   id: 0,

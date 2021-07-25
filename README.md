@@ -7,4 +7,7 @@
 * about modal
 * question modal
 * clean up calculate payoff schedule
+* tests for random utilities
 * styling
+* Eslint + functional
+* ci
