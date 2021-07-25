@@ -7,107 +7,89 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  // ResponsiveContainer,
+  ResponsiveContainer,
 } from "recharts";
 import { LoanPayoff } from "./types/LoanPayoff";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
+import groupBy from "lodash/groupBy";
+import map from "lodash/map";
 
-// const data = [
-//   {
-//     name: "Page A",
-//     uv: 4000,
-//     pv: 2400,
-//     amt: 2400,
-//   },
-//   {
-//     name: "Page B",
-//     uv: 3000,
-//     pv: 1398,
-//     amt: 2210,
-//   },
-//   {
-//     name: "Page C",
-//     uv: 2000,
-//     pv: 9800,
-//     amt: 2290,
-//   },
-//   {
-//     name: "Page D",
-//     uv: 2780,
-//     pv: 3908,
-//     amt: 2000,
-//   },
-//   {
-//     name: "Page E",
-//     uv: 1890,
-//     pv: 4800,
-//     amt: 2181,
-//   },
-//   {
-//     name: "Page F",
-//     uv: 2390,
-//     pv: 3800,
-//     amt: 2500,
-//   },
-//   {
-//     name: "Page G",
-//     uv: 3490,
-//     pv: 4300,
-//     amt: 2100,
-//   },
-// ];
+const COLORS = Object.freeze([
+  "#a0eec0",
+  "#de6b48",
+  "#2e294e",
+  "#666b6a",
+  "#e5625e",
+  "#d7263d",
+  "#8ae9c1",
+  "#72a276",
+  "#f46036",
+  "#86cd82",
+]);
 
 interface PayoffGraphProps {
   readonly loanPayoffs: LoanPayoff[];
 }
 
-interface Foo {
+interface LoanOnDate {
   readonly name: string;
   readonly date: string;
-  readonly amount: number;
-  readonly principlePaid: number;
-  readonly interestPaid: number;
-  readonly principleRemaining: number;
+  readonly balance: number;
 }
 
 export const PayoffGraph: React.FC<PayoffGraphProps> = ({ loanPayoffs }) => {
-  const emptyData: Foo[] = [];
-  const data = loanPayoffs.reduce((acc, lp) => {
+  const emptyData: LoanOnDate[] = [];
+  const flattenedPayments = loanPayoffs.reduce((acc, lp) => {
     return [
       ...acc,
       ...lp.payments.map((p) => ({
-        ...p,
         name: lp.loanName,
-        date: DateTime.fromJSDate(p.date).toFormat('yyyy LLL dd'),
+        date: DateTime.fromJSDate(p.date).toFormat("yyyy LLL dd"),
+        balance: p.principleRemaining,
       })),
     ];
   }, emptyData);
+  const paymentsByDate = groupBy(flattenedPayments, "date");
+  const dataForGraph = map(paymentsByDate, (loansForDay) =>
+    loansForDay.reduce(
+      (acc, lfd) => ({
+        ...acc,
+        date: lfd.date,
+        [lfd.name]: lfd.balance,
+      }),
+      {}
+    )
+  );
+
   return (
-    // <ResponsiveContainer width="100%" height="100%">
-    <LineChart
-      width={1000}
-      height={500}
-      data={data}
-      margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="date" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Line
-        type="monotone"
-        dataKey="date"
-        stroke="#8884d8"
-        // activeDot={{ r: 8 }}
-      />
-      <Line type="monotone" dataKey="amount" stroke="#82ca9d" />
-    </LineChart>
-    // </ResponsiveContainer>
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart
+        width={1000}
+        height={500}
+        data={dataForGraph}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        {loanPayoffs.map((lp, idx) => (
+          <Line
+            key={lp.loanName}
+            type="monotone"
+            dataKey={lp.loanName}
+            stroke={
+              COLORS[((idx % COLORS.length) + COLORS.length) % COLORS.length]
+            }
+          />
+        ))}
+      </LineChart>
+    </ResponsiveContainer>
   );
 };

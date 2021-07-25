@@ -214,7 +214,11 @@ const App: React.FC<AppProps> = ({ initialState }) => {
           </div>
         </div>
 
-        {loanPayoffs.length > 0 && <PayoffGraph loanPayoffs={loanPayoffs} />}
+        {loanPayoffs.length > 0 && (
+          <div style={{ width: "100%", height: "500px" }}>
+            <PayoffGraph loanPayoffs={loanPayoffs} />
+          </div>
+        )}
 
         {loanPayoffs.map((l) => (
           <LoanPayoff key={l.loanName} loanPayoff={l} />
