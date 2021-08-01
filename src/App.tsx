@@ -15,6 +15,7 @@ import { InitialAppState } from "./types/InitialAppState";
 import { ResultsSummary } from "./ResultsSummary";
 import { calculateTotalInterestForPayoffs } from "./accounting/calculate-total-interest";
 import { calculatePayoffDate } from "./accounting/calculate-payoff-date";
+import { formLoanToLoan } from "./form-loan-to-loan";
 
 interface AppProps {
   readonly initialState?: InitialAppState;
@@ -27,13 +28,7 @@ const App: React.FC<AppProps> = ({ initialState }) => {
   const [loanPayoffs, setLoanPayoffs] = React.useState<LoanPayoffType[]>(
     initialState
       ? calculatePayoffSchedule({
-          loans: initialState.loans.map((l) => ({
-            id: l.id,
-            name: l.name,
-            balance: Number(l.balance),
-            interestRate: Number(l.interestRate),
-            minimumPayment: Number(l.minimumPayment),
-          })),
+          loans: initialState.loans.map(formLoanToLoan),
           payoffStrategy: initialState.payoffStrategy,
           monthlyPayment: Number(initialState.monthlyPayment),
         })
@@ -84,16 +79,9 @@ const App: React.FC<AppProps> = ({ initialState }) => {
     setMonthlyPayment(e.target.value);
   };
   const onCalculateClickHandler = (): void => {
-    const ls = loans.map((l) => ({
-      id: l.id,
-      name: l.name,
-      balance: Number(l.balance),
-      interestRate: Number(l.interestRate),
-      minimumPayment: Number(l.minimumPayment),
-    }));
     setLoanPayoffs(
       calculatePayoffSchedule({
-        loans: ls,
+        loans: loans.map(formLoanToLoan),
         payoffStrategy,
         monthlyPayment: Number(monthlyPayment),
       })
