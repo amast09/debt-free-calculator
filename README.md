@@ -1,13 +1,14 @@
 ### TODO
-* loan total component
 * LoanForm type => Loan type
+* styling
 * validate monthly payment
 * indicate calculate button needs clicked
+* Add error indicators
 * help modal
 * about modal
 * question modal
-* clean up calculate payoff schedule
+* clean up calculate payoff schedule code
 * tests for random utilities
-* styling
 * Eslint + functional
 * ci
+* Google Analytics

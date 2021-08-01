@@ -13,7 +13,7 @@ export const ResultsSummary: React.FC<ResultsSummaryProps> = (
       <h4>loan total</h4>
     </div>
     <div className="col-sm-4">
-      <h4>debt free by {props.debtFreeDate}</h4>
+      <h4>debt free by {props.debtFreeDate.toDateString()}</h4>
     </div>
     <div className="col-sm-4">
       <h4>total interest paid: ${props.totalInterestPaid}</h4>

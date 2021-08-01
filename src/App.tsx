@@ -12,6 +12,9 @@ import isEqual from "lodash/isEqual";
 import { PayoffGraph } from "./PayoffGraph";
 import { appStateToQueryString } from "./app-state-to-query-string";
 import { InitialAppState } from "./types/InitialAppState";
+import { ResultsSummary } from "./ResultsSummary";
+import { calculateTotalInterestForPayoffs } from "./accounting/calculate-total-interest";
+import { calculatePayoffDate } from "./accounting/calculate-payoff-date";
 
 interface AppProps {
   readonly initialState?: InitialAppState;
@@ -215,9 +218,15 @@ const App: React.FC<AppProps> = ({ initialState }) => {
         </div>
 
         {loanPayoffs.length > 0 && (
-          <div style={{ width: "100%", height: "500px" }}>
-            <PayoffGraph loanPayoffs={loanPayoffs} />
-          </div>
+          <>
+            <div style={{ width: "100%", height: "500px" }}>
+              <PayoffGraph loanPayoffs={loanPayoffs} />
+            </div>
+            <ResultsSummary
+              debtFreeDate={calculatePayoffDate(loanPayoffs)}
+              totalInterestPaid={calculateTotalInterestForPayoffs(loanPayoffs)}
+            />
+          </>
         )}
 
         {loanPayoffs.map((l) => (
