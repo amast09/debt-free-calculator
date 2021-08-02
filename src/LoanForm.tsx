@@ -1,5 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { FormLoan } from "./types/Loan";
+import "./LoanFormStyles.css";
 
 interface LoanFormProps {
   readonly id: number;
@@ -46,55 +47,48 @@ export const LoanForm: React.FC<LoanFormProps> = ({
   }, [id, name, balance, minimumPayment, interestRate, onChange]);
 
   return (
-    <div id={`loan-${id}`} className="loan row">
-      <div className="col-sm-3">
-        <p>loan name</p>
+    <form id={`loan-${id}`}>
+      <div className="input-group">
+        <label htmlFor={`loan-name-${id}`}>Loan Name</label>
         <input
-          id={`loan-name-${id}`}
-          className="form-control"
-          name="loan-name"
+          name={`loan-name-${id}`}
           type="text"
           placeholder={`loan ${id}`}
-          value={name}
           onChange={onChangeHandler(setName)}
+          value={name}
         />
       </div>
-      <div className="col-sm-3">
-        <p>current balance</p>
+      <div className="input-group">
+        <label htmlFor={`current-balance-${id}`}>Current Balance</label>
         <input
-          id={`current-balance-${id}`}
-          className="form-control"
-          name="current-balance"
-          placeholder="$0"
+          name={`current-balance-${id}`}
+          type="text"
           value={balance}
+          placeholder="$0"
           onChange={onChangeHandler(setBalance)}
         />
       </div>
-      <div className="col-sm-3">
-        <p>minimum payment</p>
+      <div className="input-group">
+        <label htmlFor={`minimum-payment-${id}`}>Minimum Payment</label>
         <input
-          id={`minimum-payment-${id}`}
-          className="form-control"
-          name="minimum-payment"
+          name={`minimum-payment-${id}`}
           placeholder="$0"
           value={minimumPayment}
           onChange={onChangeHandler(setMinimumPayment)}
         />
       </div>
-      <div className="col-sm-2">
-        <p>interest rate</p>
+      <div className="input-group">
+        <label htmlFor={`interest-rate-${id}`}>Interest Rate</label>
         <input
-          id={`interest-rate-${id}`}
-          className="form-control"
-          name="interest-rate"
+          name={`interest-rate-${id}`}
           placeholder="0%"
           value={interestRate}
           onChange={onChangeHandler(setInterestRate)}
         />
       </div>
-      <div className="col-sm-1">
-        <div onClick={() => onRemove(id)}>X</div>
+      <div>
+        <button onClick={() => onRemove(id)}>Remove Loan</button>
       </div>
-    </div>
+    </form>
   );
 };

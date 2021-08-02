@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { appStateFromQueryString } from "./app-state-from-query-string";
+import "normalize.css";
 
 const initialState = appStateFromQueryString(window.location.search);
 

@@ -1,5 +1,4 @@
 ### TODO
-* LoanForm type => Loan type
 * styling
 * validate monthly payment
 * indicate calculate button needs clicked
