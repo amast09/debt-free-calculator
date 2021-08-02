@@ -35,13 +35,13 @@ export const LoanPayoff: React.FC<LoanPayoffProps> = ({ loanPayoff }) => {
       </div>
       {payoffDetailsVisible && (
         <table>
-          <tbody id="tbody-{{id}}">
+          <tbody id={loanPayoff.loanName}>
             <tr>
-              <td>Month</td>
-              <td>Payment</td>
-              <td>Principal Paid</td>
-              <td>Interest Paid</td>
-              <td>Principal Remaining</td>
+              <th>Month</th>
+              <th>Payment</th>
+              <th>Principal Paid</th>
+              <th>Interest Paid</th>
+              <th>Principal Remaining</th>
             </tr>
             {loanPayoff.payments.map((payment) => (
               <tr>

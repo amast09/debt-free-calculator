@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from "react";
 import { FormLoan } from "./types/Loan";
-import "./LoanFormStyles.css";
 
 interface LoanFormProps {
   readonly id: number;

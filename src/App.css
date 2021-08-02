@@ -54,6 +54,22 @@ form label {
   margin-bottom: 5px;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  padding-bottom: 5px;
+  border-bottom: 1px solid black;
+}
+
+td {
+  padding: 10px 0;
+  border-bottom: 1px solid black;
+}
+
 .input-group {
   display: flex;
   flex-direction: column;
