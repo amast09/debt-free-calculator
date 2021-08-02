@@ -76,7 +76,8 @@ const App: React.FC<AppProps> = ({ initialState }) => {
   const onMonthlyPaymentChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setMonthlyPayment(e.target.value);
   };
-  const onCalculateClickHandler = (): void => {
+  const onCalculateClickHandler = (e: React.FormEvent): void => {
+    e.preventDefault();
     setLoanPayoffs(
       calculatePayoffSchedule({
         loans: loans.map(formLoanToLoan),
@@ -104,7 +105,7 @@ const App: React.FC<AppProps> = ({ initialState }) => {
             <a href="/">help</a> / <a href="/">about</a>
           </div>
         </header>
-        <p>
+        <p className="sub-header">
           To view your loans later, simply copy the link in the address bar. You
           can paste it in to your address bar later to view your loans.
         </p>
@@ -123,7 +124,10 @@ const App: React.FC<AppProps> = ({ initialState }) => {
           Add Loan
         </button>
 
-        <form className="payoff-strategy-form">
+        <form
+          className="payoff-strategy-form"
+          onSubmit={onCalculateClickHandler}
+        >
           <div className="input-group">
             <label htmlFor="monthly-payment">Monthly Payment</label>
             <input
@@ -178,29 +182,32 @@ const App: React.FC<AppProps> = ({ initialState }) => {
           <LoanPayoff key={l.loanName} loanPayoff={l} />
         ))}
 
-        <div>
+        <footer>
           <a href="https://aaronmast.dev">aaronmast.dev</a>
-          <a
-            href="https://github.com/amast/debt-free-calculator/issues"
-            title="Report bugs"
-          >
-            Report a Bug
-          </a>
-          \
-          <a
-            href="https://github.com/amast/debt-free-calculator"
-            title="Debt Free Calculator on GitHub"
-          >
-            GitHub
-          </a>
-          \
-          <a
-            href="https://github.com/amast/debt-free-calculator/blob/master/LICENSE"
-            title="License"
-          >
-            MIT License
-          </a>
-        </div>
+
+          <div>
+            <a
+              href="https://github.com/amast/debt-free-calculator/issues"
+              title="Report bugs"
+            >
+              Report a Bug
+            </a>
+            /
+            <a
+              href="https://github.com/amast/debt-free-calculator"
+              title="Debt Free Calculator on GitHub"
+            >
+              GitHub
+            </a>
+            /
+            <a
+              href="https://github.com/amast/debt-free-calculator/blob/master/LICENSE"
+              title="License"
+            >
+              MIT License
+            </a>
+          </div>
+        </footer>
       </div>
 
       {/*<div>*/}

@@ -16,6 +16,35 @@ header {
   justify-content: space-between;
 }
 
+header h1 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.sub-header {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+footer a {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+footer a:last-child {
+  margin-right: 0;
+}
+
+footer a:first-child {
+  margin-left: 0;
+}
+
 button {
   cursor: pointer;
   white-space: nowrap;
@@ -38,6 +67,7 @@ form label {
 
 .payoff-strategy-form {
   justify-content: left;
+  align-items: start;
 }
 
 .radio-option-group {
