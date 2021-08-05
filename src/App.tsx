@@ -14,6 +14,7 @@ import { ResultsSummary } from "./ResultsSummary";
 import { calculateTotalInterestForPayoffs } from "./accounting/calculate-total-interest";
 import { calculatePayoffDate } from "./accounting/calculate-payoff-date";
 import { formLoanToLoan } from "./form-loan-to-loan";
+import currency from "currency.js";
 
 interface AppProps {
   readonly initialState?: InitialAppState;
@@ -174,6 +175,10 @@ const App: React.FC<AppProps> = ({ initialState }) => {
             <ResultsSummary
               debtFreeDate={calculatePayoffDate(loanPayoffs)}
               totalInterestPaid={calculateTotalInterestForPayoffs(loanPayoffs)}
+              loansTotal={loans.reduce(
+                (acc, l) => currency(acc).add(currency(l.balance).value).value,
+                0
+              )}
             />
           </>
         )}

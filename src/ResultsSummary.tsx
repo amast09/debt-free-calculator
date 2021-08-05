@@ -3,20 +3,17 @@ import React from "react";
 interface ResultsSummaryProps {
   readonly debtFreeDate: Date;
   readonly totalInterestPaid: number;
+  readonly loansTotal: number;
 }
 
-export const ResultsSummary: React.FC<ResultsSummaryProps> = (
-  props: ResultsSummaryProps
-) => (
-  <div className="row text-center">
-    <div className="col-sm-4">
-      <h4>loan total</h4>
-    </div>
-    <div className="col-sm-4">
-      <h4>debt free by {props.debtFreeDate.toDateString()}</h4>
-    </div>
-    <div className="col-sm-4">
-      <h4>total interest paid: ${props.totalInterestPaid}</h4>
-    </div>
+export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
+  debtFreeDate,
+  totalInterestPaid,
+  loansTotal,
+}) => (
+  <div className="results-summary">
+    <h4>Total Debt: ${loansTotal}</h4>
+    <h4>Total Interest Paid: ${totalInterestPaid}</h4>
+    <h4>Debt Free by: {debtFreeDate.toDateString()}</h4>
   </div>
 );

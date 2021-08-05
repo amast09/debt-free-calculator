@@ -11,27 +11,25 @@ export const LoanPayoff: React.FC<LoanPayoffProps> = ({ loanPayoff }) => {
     React.useState<boolean>(false);
 
   return (
-    <div id="loan-head-{{id}}">
-      <div
-        onClick={() => {
-          setPayoffDetailsVisible((v) => !v);
-        }}
-      >
-        {payoffDetailsVisible ? "V" : ">"}
-      </div>
-      <div>
+    <div className="loan-payoff">
+      <div className="loan-payoff__header">
         <h4>{loanPayoff.loanName}</h4>
-      </div>
-      <div>
         <h4>
           paid off by{" "}
           {loanPayoff.payments[
             loanPayoff.payments.length - 1
           ].date.toDateString()}
         </h4>
-      </div>
-      <div>
         <h4>interest paid: ${calculateTotalInterest(loanPayoff.payments)}</h4>
+        <div>
+          <button
+            onClick={() => {
+              setPayoffDetailsVisible((v) => !v);
+            }}
+          >
+            {payoffDetailsVisible ? "Hide Details" : "Show Details"}
+          </button>
+        </div>
       </div>
       {payoffDetailsVisible && (
         <table>
