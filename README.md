@@ -10,4 +10,3 @@
 * tests for random utilities
 * Eslint + functional
 * ci
-* Google Analytics
